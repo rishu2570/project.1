@@ -8,7 +8,7 @@ This project builds a production-ready Python application for forecasting whethe
 - Preprocesses and normalizes data
 - Trains a hybrid CNN + BiLSTM model
 - Evaluates using accuracy, precision, recall, F1, ROC-AUC, and confusion metrics
-- Provides a Flask dashboard and REST APIs
+- Provides a FastAPI dashboard and REST APIs
 - Stores predictions and requests in SQLite
 - Generates plots and reports
 
@@ -20,7 +20,7 @@ This project builds a production-ready Python application for forecasting whethe
 - reports/ - evaluation reports
 - plots/ - visualization assets
 - utils/ - shared helpers and database utilities
-- app/ - Flask web app and templates
+- app/templates/ - dashboard template
 
 ## Installation
 ```bash
@@ -29,7 +29,7 @@ pip install -r requirements.txt
 
 ## Run locally
 ```bash
-python main.py
+uvicorn main:app --reload
 ```
 
 The app will be available at http://127.0.0.1:5000.
@@ -40,7 +40,7 @@ The app will be available at http://127.0.0.1:5000.
 3. Connect the repository.
 4. Use these settings:
    - Build Command: pip install -r requirements.txt
-   - Start Command: gunicorn main:app
+   - Start Command: uvicorn main:app --host 0.0.0.0 --port $PORT
 5. Deploy.
 
-The project includes [render.yaml](render.yaml) and [Procfile](Procfile) for this purpose.
+The project includes [Procfile](Procfile) for process-based hosts. Vercel detects the FastAPI `app` in `main.py` automatically.
