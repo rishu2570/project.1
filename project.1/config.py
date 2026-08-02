@@ -3,6 +3,8 @@ import os
 from datetime import datetime
 
 BASE_DIR = Path(__file__).resolve().parent
+RUNTIME_DIR = Path("/tmp/stock-market-forecast") if os.environ.get("VERCEL") else BASE_DIR
+RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
 DATA_DIR = BASE_DIR / "data"
 MODELS_DIR = BASE_DIR / "models"
 SAVED_MODELS_DIR = BASE_DIR / "saved_models"
@@ -12,8 +14,8 @@ NOTEBOOKS_DIR = BASE_DIR / "notebooks"
 APP_DIR = BASE_DIR / "app"
 TEMPLATES_DIR = APP_DIR / "templates"
 STATIC_DIR = APP_DIR / "static"
-DB_PATH = DATA_DIR / "market_forecast.db"
-RAW_DATA_PATH = DATA_DIR / "market_data.csv"
+DB_PATH = RUNTIME_DIR / "market_forecast.db"
+RAW_DATA_PATH = RUNTIME_DIR / "market_data.csv"
 PROCESSED_DATA_PATH = DATA_DIR / "processed_data.csv"
 MODEL_PATH = SAVED_MODELS_DIR / "cnn_bilstm_model.keras"
 SCALER_PATH = SAVED_MODELS_DIR / "scaler.joblib"

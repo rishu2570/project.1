@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +19,16 @@ from utils.helpers import get_logger
 logger = get_logger(__name__)
 
 
+@lru_cache(maxsize=1)
+def load_scaler():
+    return joblib.load(SCALER_PATH)
+
+
+@lru_cache(maxsize=1)
+def load_forecasting_model():
+    return tf.keras.models.load_model(MODEL_PATH)
+
+
 def predict_movement(symbol: str = "^NSEI", source: str = "web") -> dict[str, Any]:
     save_request(symbol, source)
     df = download_market_data(symbol=symbol)
@@ -30,10 +41,10 @@ def predict_movement(symbol: str = "^NSEI", source: str = "web") -> dict[str, An
     df = df.dropna(subset=feature_columns + ["target"]).copy()
     df[feature_columns] = df[feature_columns].apply(pd.to_numeric, errors="coerce")
     df = df.dropna(subset=feature_columns)
-    scaler = joblib.load(SCALER_PATH)
+    scaler = load_scaler()
     scaled = scaler.transform(df[feature_columns])
     seq = build_sequences(scaled, SEQUENCE_LENGTH)[-1:]
-    model = tf.keras.models.load_model(MODEL_PATH)
+    model = load_forecasting_model()
     prob = float(model.predict(seq, verbose=0)[0][0])
     prediction = "UP" if prob >= 0.5 else "DOWN"
     save_prediction(symbol, prediction, prob)
